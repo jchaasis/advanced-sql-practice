@@ -1,0 +1,74 @@
+SQL supplemental:
+
+Votes: each row represents a single vote from a person on an issue. The same person may vote for multiple issues, or they may only vote for one. Votes are tied to the city that their citizen is from.
+
+Cities: a bunch of cities, each tied to the state they're in.
+
+States: places where the cities are. Cities are linked to the state they occur in.
+
+Issues: a description of an issue that the people are voting on.
+
+
+
+
+You can write as many queries as required to get the answers to the following questions. You do not need to solve this in one query.
+
+-Were there more male or female voters in Greensboro? Females.
+
+votes=# Select Count(id), gender
+From votes
+Where "cityId" = 68
+Group by gender;
+count | gender
+-------+--------
+404 | female
+396 | male
+(2 rows)
+
+
+-What is the average age of voters in Orlando?
+
+//get orlando's id
+select * from cities where name = 'Orlando';
+    id |  name   |         createdAt          |         updatedAt          | stateId
+    ----+---------+----------------------------+----------------------------+---------
+    77 | Orlando | 2017-08-31 10:53:40.595-04 | 2017-08-31 10:53:42.304-04 |       8
+
+//get answer
+select avg(age) from votes where "cityId" = 77;
+         avg
+---------------------
+ 51.4562500000000000
+(1 row)
+
+
+-Which state has the most cities listed?
+
+select count("stateId"), states.name from cities join states on(cities."stateId" = states.id) group by states.name order by count desc;
+ count |         name
+-------+----------------------
+   212 | California
+    83 | Texas
+    73 | Florida
+    52 | Illinois
+    etc.
+
+-Which state had the most votes placed?
+
+select count("cityId"), states.name from votes join cities on (votes."cityId" = cities.id) join states on (cities."stateId" = states.id) group by states.name order by count desc limit 1;
+ count  |    name
+--------+------------
+ 169600 | California
+(1 row)
+
+
+-What percentage of cities passed the minimum wage issue (> 50% of votes)?
+
+
+
+-How many of the issues were approved in each of the following cities? An issue is 'approved' if it got more than 50% of the votes.
+
+Dallas
+Atlanta
+Anaheim
+Boston
